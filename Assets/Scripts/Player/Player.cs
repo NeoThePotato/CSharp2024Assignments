@@ -45,6 +45,7 @@ namespace Player
 			// Transitions
 			_stateMachine.AddTwoWayTransition(standbyState, movingState, () => _input.Player.Move.IsPressed());
 			_stateMachine.AddTwoWayTransition(standbyState, duckingState, () => _input.Player.Duck.IsPressed());
+			_stateMachine.AddTwoWayTransition(movingState, duckingState, () => _input.Player.Duck.IsPressed());
 			_stateMachine.AddTransition(standbyState, jumpingState, () => _input.Player.Jump.IsPressed());
 			_stateMachine.AddTransition(movingState, jumpingState, () => _input.Player.Jump.IsPressed());
 			OnCollisionEnter2DAction += () => _stateMachine.TriggerTransition(jumpingState, standbyState);
