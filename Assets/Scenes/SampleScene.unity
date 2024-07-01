@@ -463,6 +463,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rb: {fileID: 634296225}
   _collider: {fileID: 634296222}
+  _speedMultiplier: 3
+  _jumpMultiplier: 5
 --- !u!50 &634296225
 Rigidbody2D:
   serializedVersion: 4

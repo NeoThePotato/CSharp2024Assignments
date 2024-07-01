@@ -8,6 +8,8 @@ public class Player : MonoBehaviour
 	[SerializeField] private Rigidbody2D _rb;
 	[SerializeField] private Collider2D _collider;
 	[SerializeField] private Actions _actions;
+	[SerializeField] private float _speedMultiplier = 1;
+	[SerializeField] private float _jumpMultiplier = 5;
 	private event UnityAction OnCollisionEnter2DAction;
 	private StateMachine _stateMachine;
 
@@ -35,7 +37,17 @@ public class Player : MonoBehaviour
 		OnCollisionEnter2DAction += () => _stateMachine.TriggerTransition(jumpingState, standbyState);
 	}
 
-	private void OnCollisionEnter2D(Collision2D collision)
+    private void OnEnable()
+    {
+        _actions.Enable();
+    }
+
+    private void OnDisable()
+    {
+        _actions.Disable();
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
 	{
 		OnCollisionEnter2DAction?.Invoke();
 	}
@@ -55,6 +67,10 @@ public class Player : MonoBehaviour
 		}
 
 		public abstract void Update();
+
+		public abstract void OnEnter();
+
+		public abstract void OnExit();
 	}
 
 	public class StandbyState : PlayerState
@@ -65,7 +81,13 @@ public class Player : MonoBehaviour
 
 		public override void Update()
 		{ }
-	}
+
+        public override void OnEnter()
+		{ }
+
+        public override void OnExit()
+        { }
+    }
 
 	public class MovingState : PlayerState
 	{
@@ -74,9 +96,15 @@ public class Player : MonoBehaviour
 
 		public override void Update()
 		{
-			player._rb.velocityX = player._actions.Player.Move.ReadValue<Vector2>().x;
+			player._rb.velocityX = player._actions.Player.Move.ReadValue<Vector2>().x * player._speedMultiplier;
 		}
-	}
+
+        public override void OnEnter()
+        { }
+
+        public override void OnExit()
+        { }
+    }
 
 	public class JumpingState : PlayerState
 	{
@@ -84,10 +112,16 @@ public class Player : MonoBehaviour
 		{ }
 
 		public override void Update()
-		{
-			player._rb.velocityX = player._actions.Player.Move.ReadValue<Vector2>().x;
-		}
-	}
+		{ }
+
+        public override void OnEnter()
+        {
+			player._rb.AddForce(Vector2.up * player._jumpMultiplier, ForceMode2D.Impulse);
+        }
+
+        public override void OnExit()
+        { }
+    }
 
 	public class DuckingState : PlayerState
 	{
@@ -96,8 +130,18 @@ public class Player : MonoBehaviour
 
 		public override void Update()
 		{
-			player._rb.velocityX = player._actions.Player.Move.ReadValue<Vector2>().x * 0.5f;
+			player._rb.velocityX = player._actions.Player.Move.ReadValue<Vector2>().x * 0.3f * player._speedMultiplier;
 		}
-	}
+
+        public override void OnEnter()
+        {
+			player.gameObject.transform.localScale = new Vector3(1, 0.5f, 1);
+		}
+
+        public override void OnExit()
+        {
+            player.gameObject.transform.localScale = Vector3.one;
+        }
+    }
 	#endregion
 }

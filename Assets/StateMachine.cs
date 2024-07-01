@@ -1,14 +1,24 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using UnityEngine;
 
 public class StateMachine : IState
 {
 	private StateWrapper _currentState;
 	private HashSet<StateWrapper> _states;
 
-	private IState CurrentState { set { _currentState = _states.Single(s => s.state == value); } }
+	private IState CurrentState 
+	{ set 
+		{ 
+			_currentState.state?.OnExit();
+			_currentState = _states.Single(s => s.state == value);
+			_currentState.state.OnEnter();
+			UnityEngine.Debug.Log(value); 
+		} 
+	}
 
 	public StateMachine(int capacity = 10)
 	{
@@ -55,7 +65,17 @@ public class StateMachine : IState
 			CurrentState = to;
 	}
 
-	private struct Transition : IEquatable<Transition>
+    public void OnEnter()
+    {
+		_currentState.state.OnEnter();
+    }
+
+    public void OnExit()
+    {
+        _currentState.state.OnExit();
+    }
+
+    private struct Transition : IEquatable<Transition>
 	{
 		public static Transition Empty = new();
 
@@ -107,4 +127,8 @@ public class StateMachine : IState
 public interface IState
 {
 	public abstract void Update();
+
+	public abstract void OnEnter();
+
+	public abstract void OnExit();
 }
