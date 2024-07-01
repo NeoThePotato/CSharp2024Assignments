@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 
@@ -10,14 +9,17 @@ public class StateMachine : IState
 	private StateWrapper _currentState;
 	private HashSet<StateWrapper> _states;
 
-	private IState CurrentState 
-	{ set 
-		{ 
+	private IState CurrentState
+	{
+		set
+		{
 			_currentState.state?.OnExit();
 			_currentState = _states.Single(s => s.state == value);
 			_currentState.state.OnEnter();
-			UnityEngine.Debug.Log(value); 
-		} 
+#if UNITY_EDITOR
+			Debug.Log($"Switched to {value}.");
+#endif
+		}
 	}
 
 	public StateMachine(int capacity = 10)
