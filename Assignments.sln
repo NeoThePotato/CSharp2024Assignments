@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34003.232
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediatorPattern", "MediatorPattern.csproj", "{11A421CD-1EF0-4326-B951-205B77F9A8AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChainOfCommands", "ChainOfCommands.csproj", "{11A421CD-1EF0-4326-B951-205B77F9A8AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
