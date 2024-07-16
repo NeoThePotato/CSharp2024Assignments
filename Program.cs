@@ -2,48 +2,53 @@
 {
 	public static void Main()
 	{
-		var space = new SpaceTime(GetSystems());
-		Star theSun = space.PointOfReference as Star;
-		theSun.SendPulse();
-		Star proxima = space.First(obj => obj is Star star && star.Type == 'M') as Star;
-		proxima.SendPulse();
+		var matrix = GetCustomMatrix();
+		Console.WriteLine("Created matrix:");
+		PrintMatrix(matrix);
+		GetCustomMatrixProcessor().Handle(matrix);
+		Console.WriteLine("Processed matrix:");
+		PrintMatrix(matrix);
 	}
 
-	private static IEnumerable<SolarSystem> GetSystems()
+	private static void PrintMatrix(int[,] matrix)
 	{
-		yield return SolarSystem();
-		yield return ProximaCentauri();
+		for (int i = 0; i < matrix.GetLength(0); i++)
+		{
+			for (int j = 0; j < matrix.GetLength(1); j++)
+			{
+				Console.Write(matrix[i, j]);
+				Console.Write(' ');
+			}
+			Console.Write('\n');
+		}
 	}
 
-	public static SolarSystem SolarSystem()
+	private static int[,] GetCustomMatrix()
 	{
-		return new SolarSystem(
-			stars: new[] { new Star("Sol", 0, 'G') },
-			planets: new[] {
-				new Planet("Mercury", 57.91e+9),
-				new Planet("Venus", 108.21e+9),
-				new Planet("Earth", 149.6e+9),
-				new Planet("Mars", 227.94e+9),
-				new Planet("Jupiter", 778.48e+9),
-				new Planet("Saturn", 1433.53e+9),
-				new Planet("Uranus", 2870.97e+9),
-				new Planet("Neptune", 4498.41e+9)
-			},
-			name: "Solar System"
-			);
+		var matrix = new int[3, 3];
+		var mp = new AdditionProcessor();
+		mp.Value = 1;
+		mp.Handle(matrix);
+		return matrix;
 	}
 
-	public static SolarSystem ProximaCentauri()
+	private static MatrixProcessor GetCustomMatrixProcessor()
 	{
-		var distance = 4.0174992e+16;
-		return new SolarSystem(
-			stars: new[] { new Star("Proxima", distance, 'M') },
-			planets: new[] {
-				new Planet("Proxima d", distance + 43.15e+9),
-				new Planet("Proxima b", distance + 72.65e+9),
-				new Planet("Proxima c", distance + 129.31e+9),
-			},
-			name: "Proxima Centauri"
-			);
+		// *2
+		var mp1 = new MultiplicationProcessor();
+		mp1.Value = 2;
+
+		// +3
+		var mp2 = new AdditionProcessor();
+		mp2.Value = 3;
+
+		// -1
+		var mp3 = new AdditionProcessor();
+		mp3.Value = -1;
+
+		mp1.SetNext(mp2);
+		mp2.SetNext(mp3);
+
+		return mp1;
 	}
 }
